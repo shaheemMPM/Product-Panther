@@ -4,6 +4,7 @@ import Layout from "app/core/layouts/Layout"
 import getRequest from "app/requests/queries/getRequest"
 import updateRequest from "app/requests/mutations/updateRequest"
 import { RequestForm, FORM_ERROR } from "app/requests/components/RequestForm"
+import { CreateRequest } from "../../../validations"
 
 export const EditRequest = () => {
   const router = useRouter()
@@ -26,7 +27,7 @@ export const EditRequest = () => {
           // TODO use a zod schema for form validation
           //  - Tip: extract mutation's schema into a shared `validations.ts` file and
           //         then import and use it here
-          // schema={UpdateRequest}
+          schema={CreateRequest}
           initialValues={request}
           onSubmit={async (values) => {
             try {
@@ -35,7 +36,7 @@ export const EditRequest = () => {
                 ...values,
               })
               await setQueryData(updated)
-              router.push(Routes.ShowRequestPage({ [requestId]: updated.id }))
+              router.push(Routes.ShowRequestPage({ requestId: String(updated.id) }))
             } catch (error) {
               console.error(error)
               return {
