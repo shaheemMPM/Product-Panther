@@ -20,6 +20,10 @@ export const Product = () => {
         <h1>Product {product.id}</h1>
         <pre>{JSON.stringify(product, null, 2)}</pre>
 
+        {product.requests.map((request) => {
+          return <div>{request.title}</div>
+        })}
+
         <Link href={Routes.EditProductPage({ productId: String(product.id) })}>
           <a>Edit</a>
         </Link>
