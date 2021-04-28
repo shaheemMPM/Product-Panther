@@ -1,6 +1,5 @@
 import { resolver } from "blitz"
 import db from "db"
-import * as z from "zod"
 import { UpdateRequest } from "../validations"
 
 export default resolver.pipe(
