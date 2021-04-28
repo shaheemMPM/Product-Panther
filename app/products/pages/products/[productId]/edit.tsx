@@ -34,7 +34,7 @@ export const EditProduct = () => {
                 id: product.id,
                 ...values,
               })
-              await setQueryData(updated)
+              await setQueryData({ ...updated, requests: [] })
               router.push(Routes.ShowProductPage({ productId: String(updated.id) }))
             } catch (error) {
               console.error(error)
