@@ -2,6 +2,7 @@ import { Link, useRouter, useMutation, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import createProduct from "app/products/mutations/createProduct"
 import { ProductForm, FORM_ERROR } from "app/products/components/ProductForm"
+import { CreateProduct } from "app/products/validations"
 
 const NewProductPage: BlitzPage = () => {
   const router = useRouter()
@@ -13,11 +14,8 @@ const NewProductPage: BlitzPage = () => {
 
       <ProductForm
         submitText="Create Product"
-        // TODO use a zod schema for form validation
-        //  - Tip: extract mutation's schema into a shared `validations.ts` file and
-        //         then import and use it here
-        // schema={CreateProduct}
-        // initialValues={{}}
+        schema={CreateProduct}
+        initialValues={{}}
         onSubmit={async (values) => {
           try {
             const product = await createProductMutation(values)

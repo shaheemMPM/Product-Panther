@@ -23,18 +23,16 @@ export const EditProduct = () => {
 
         <ProductForm
           submitText="Update Product"
-          // TODO use a zod schema for form validation
-          //  - Tip: extract mutation's schema into a shared `validations.ts` file and
-          //         then import and use it here
           // schema={UpdateProduct}
           initialValues={product}
           onSubmit={async (values) => {
             try {
               const updated = await updateProductMutation({
                 id: product.id,
-                ...values,
+                name: values.name,
+                description: values.description,
               })
-              await setQueryData({ ...updated, requests: [] })
+              await setQueryData(updated)
               router.push(Routes.ShowProductPage({ productId: String(updated.id) }))
             } catch (error) {
               console.error(error)
