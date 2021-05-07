@@ -13,8 +13,7 @@ const Layout = ({ title, children }: LayoutProps) => {
         <title>{title || "product-panther"}</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      {children}
+      <div className="max-w-screen-lg mx-auto">{children}</div>
     </>
   )
 }

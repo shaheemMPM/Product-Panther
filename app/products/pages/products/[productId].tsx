@@ -18,11 +18,29 @@ export const Product = () => {
 
       <div>
         <h1>Product {product.id}</h1>
-        <pre>{JSON.stringify(product, null, 2)}</pre>
+        <h2 className="text-lg font-extrabold tracking-tight leading-tight">
+          Product Feature Requests
+        </h2>
+        <ul className="space-y-4 p-4 bg-gray-200 rounded">
+          {product.requests.map((request, ind) => {
+            return (
+              <li className="p-4 shadow rounded flex flex-row space-x-4 bg-white" key={ind}>
+                <div className="border rounded">
+                  <button className="flex flex-col space-y-4 p-3 rounded shadow-sm hover:bg-yellow-200">
+                    <span>123</span>
+                    <span>Vote</span>
+                  </button>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-xl">{request.title}</span>
+                  <span className="text-xl">{request.description}</span>
+                </div>
+              </li>
+            )
+          })}
+        </ul>
 
-        {product.requests.map((request) => {
-          return <div>{request.title}</div>
-        })}
+        <pre>{JSON.stringify(product, null, 2)}</pre>
 
         <Link href={Routes.EditProductPage({ productId: String(product.id) })}>
           <a>Edit</a>
