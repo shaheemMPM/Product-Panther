@@ -8,14 +8,16 @@ const UserInfo = () => {
   if (currentUser) {
     return (
       <>
-        <button
-          className="button small ml-auto"
-          onClick={async () => {
-            await logoutMutation()
-          }}
-        >
-          Logout
-        </button>
+        <div className="flex flex-row space-x-4 justify-center items-center mt-4">
+          <button
+            className="button small ml-auto"
+            onClick={async () => {
+              await logoutMutation()
+            }}
+          >
+            Logout
+          </button>
+        </div>
       </>
     )
   } else {
