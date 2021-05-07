@@ -1,75 +1,47 @@
 import { Suspense } from "react"
-import { Link, BlitzPage, useMutation, Routes } from "blitz"
-import Layout from "app/core/layouts/Layout"
-import { useCurrentUser } from "app/core/hooks/useCurrentUser"
-import logout from "app/auth/mutations/logout"
+import { Link, BlitzPage, useQuery } from "blitz"
+import getProducts from "app/products/queries/getProducts"
 
-/*
- * This file is just for a pleasant getting started page for your new app.
- * You can delete everything in here and start from scratch if you like.
- */
+const HomePage = () => {
+  const [products] = useQuery(getProducts, {})
+  console.log("products", products)
 
-const UserInfo = () => {
-  const currentUser = useCurrentUser()
-  const [logoutMutation] = useMutation(logout)
-
-  if (currentUser) {
-    return (
-      <>
-        <button
-          className="button small"
-          onClick={async () => {
-            await logoutMutation()
-          }}
-        >
-          Logout
-        </button>
-        <div>
-          User id: <code>{currentUser.id}</code>
-          <br />
-          User role: <code>{currentUser.role}</code>
-        </div>
-        <Link href={Routes.ProductsPage()}>
-          <a className="button small">
-            <strong>Products</strong>
-          </a>
-        </Link>{" "}
-        <Link href={Routes.RequestsPage()}>
-          <a className="button small">
-            <strong>Requests</strong>
-          </a>
-        </Link>
-      </>
-    )
-  } else {
-    return (
-      <>
-        <Link href={Routes.SignupPage()}>
-          <a className="button small">
-            <strong>Sign Up</strong>
-          </a>
-        </Link>{" "}
-        <Link href={Routes.LoginPage()}>
-          <a className="button small">
-            <strong>Login</strong>
-          </a>
-        </Link>
-      </>
-    )
-  }
-}
-
-const Home: BlitzPage = () => {
   return (
-    <div className="container">
-      <Suspense fallback="Loading...">
-        <UserInfo />
-      </Suspense>
+    <div className="">
+      <div className="flex flex-col space-y-10 py-20 justify-center text-center">
+        <p className="uppercase tracking-wider text-blue-600">Introducing...</p>
+        <h1 className="text-6xl font-extrabold tracking-tighter">Simple user feedback.</h1>
+        <p className="text-gray-800">Without happy users, you are nothing.</p>
+        <Link href="/signup">
+          <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
+            I want feedback
+          </a>
+        </Link>
+      </div>
+      <ul className="grid grid-cols-12">
+        {products?.products?.map((product) => {
+          return (
+            <li key={product.id} className="border p-4 col-span-4">
+              <h2 className="font-bold text-lg">{product.name}</h2>
+              <Link href={`/products/${product.id}`}>
+                <a className="text-blue-500 underline">View requests</a>
+              </Link>
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }
 
+const Home: BlitzPage = () => {
+  return (
+    <Suspense fallback="Loading...">
+      <HomePage />
+    </Suspense>
+  )
+}
+
 Home.suppressFirstRenderFlicker = true
-Home.getLayout = (page) => <Layout title="Home">{page}</Layout>
 
 export default Home

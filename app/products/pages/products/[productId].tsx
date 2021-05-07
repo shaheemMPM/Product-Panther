@@ -5,23 +5,24 @@ import getProduct from "app/products/queries/getProduct"
 import deleteProduct from "app/products/mutations/deleteProduct"
 import voteOnRequest from "app/requests/mutations/voteOnRequest"
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
+import classNames from "classnames"
 
 export const Product = () => {
   const router = useRouter()
   const productId = useParam("productId", "number")
   const [deleteProductMutation] = useMutation(deleteProduct)
   const [voteOnRequestMutation] = useMutation(voteOnRequest)
-  const [product] = useQuery(getProduct, { id: productId })
+  const [product, { refetch }] = useQuery(getProduct, { id: productId })
   const currentUser = useCurrentUser()
 
   return (
     <>
       <Head>
-        <title>Product {product.id}</title>
+        <title>{product.name}</title>
       </Head>
 
       <div>
-        <h1>Product {product.id}</h1>
+        <h1>{product.name}</h1>
         <header className="flex flex-row mb-4 items-center">
           <h2 className="text-base tracking-wider uppercase leading-tight font-semibold text-gray-600">
             Product Feature Requests
@@ -36,6 +37,10 @@ export const Product = () => {
         </header>
         <ul className="space-y-4 p-4 bg-gray-200 rounded">
           {product.requests.map((request, ind) => {
+            const hasVoted = request.votesOnRequest.find(
+              (voteOnRequest) => voteOnRequest.userId === currentUser?.id
+            )
+
             return (
               <li className="p-4 shadow rounded flex flex-row space-x-4 bg-white" key={ind}>
                 <div className="border rounded">
@@ -48,15 +53,20 @@ export const Product = () => {
                             userId: currentUser?.id,
                           },
                         })
+                        refetch()
                       } catch (error) {
-                        alert("error")
                         console.log(error)
                       }
                     }}
-                    className="flex flex-col space-y-4 p-3 rounded shadow-sm hover:bg-yellow-200"
+                    className={classNames(
+                      `flex flex-col space-y-4 p-3 rounded shadow-sm hover:bg-yellow-200`,
+                      {
+                        "bg-blue-200": hasVoted,
+                      }
+                    )}
                   >
-                    <span>123</span>
-                    <span>Vote</span>
+                    <span className="self-center">{request.votesOnRequest.length}</span>
+                    <span className="self-center">Vote</span>
                   </button>
                 </div>
                 <div className="flex flex-col">
@@ -67,8 +77,6 @@ export const Product = () => {
             )
           })}
         </ul>
-
-        {/* <pre>{JSON.stringify(product, null, 2)}</pre> */}
 
         <Link href={Routes.EditProductPage({ productId: String(product.id) })}>
           <a>Edit</a>
@@ -93,17 +101,9 @@ export const Product = () => {
 
 const ShowProductPage: BlitzPage = () => {
   return (
-    <div>
-      <p>
-        <Link href={Routes.ProductsPage()}>
-          <a>Products</a>
-        </Link>
-      </p>
-
-      <Suspense fallback={<div>Loading...</div>}>
-        <Product />
-      </Suspense>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <Product />
+    </Suspense>
   )
 }
 
