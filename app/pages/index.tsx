@@ -1,10 +1,32 @@
 import { Suspense } from "react"
-import { Link, BlitzPage, useQuery } from "blitz"
+import { Link, BlitzPage, useQuery, Head } from "blitz"
 import getProducts from "app/products/queries/getProducts"
+import { useCurrentUser } from "app/core/hooks/useCurrentUser"
+import Layout from "app/core/layouts/Layout"
+
+const HomeAction = () => {
+  const currentUser = useCurrentUser()
+  if (currentUser) {
+    return (
+      <Link href="/products/new">
+        <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
+          I want feedback
+        </a>
+      </Link>
+    )
+  } else {
+    return (
+      <Link href="/login">
+        <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
+          I want feedback
+        </a>
+      </Link>
+    )
+  }
+}
 
 const HomePage = () => {
   const [products] = useQuery(getProducts, {})
-  console.log("products", products)
 
   return (
     <div className="">
@@ -12,11 +34,7 @@ const HomePage = () => {
         <p className="uppercase tracking-wider text-blue-600">Introducing...</p>
         <h1 className="text-6xl font-extrabold tracking-tighter">Simple user feedback.</h1>
         <p className="text-gray-800">Without happy users, you are nothing.</p>
-        <Link href="/signup">
-          <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
-            I want feedback
-          </a>
-        </Link>
+        <HomeAction />
       </div>
       <ul className="grid grid-cols-12">
         {products?.products?.map((product) => {
@@ -36,12 +54,18 @@ const HomePage = () => {
 
 const Home: BlitzPage = () => {
   return (
-    <Suspense fallback="Loading...">
-      <HomePage />
-    </Suspense>
+    <>
+      <Head>
+        <title>Product Panther</title>
+      </Head>
+      <Suspense fallback="Loading...">
+        <HomePage />
+      </Suspense>
+    </>
   )
 }
 
 Home.suppressFirstRenderFlicker = true
+Home.getLayout = (page) => <Layout>{page}</Layout>
 
 export default Home
