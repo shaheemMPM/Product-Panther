@@ -6,6 +6,5 @@ export default resolver.pipe(resolver.authorize(), async ({ data }) => {
   const vote = await db.votesOnRequests.create({
     data,
   })
-  console.log(vote)
   return vote
 })
