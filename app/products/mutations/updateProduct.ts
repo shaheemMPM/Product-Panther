@@ -18,7 +18,7 @@ export default resolver.pipe(
     const product = await db.product.update({
       where: { id },
       data: { name: name, description: description },
-      include: { requests: true },
+      include: { requests: { include: { votesOnRequest: true } } },
     })
 
     return product
