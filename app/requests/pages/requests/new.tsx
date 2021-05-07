@@ -18,8 +18,8 @@ const NewRequestPage: BlitzPage = () => {
         initialValues={{}}
         onSubmit={async (values) => {
           try {
-            const request = await createRequestMutation(values)
-            router.push(`/requests/${request.id}`)
+            await createRequestMutation(values)
+            router.push(`/products/1`)
           } catch (error) {
             console.error(error)
             return {
