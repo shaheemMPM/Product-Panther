@@ -1,4 +1,3 @@
-import voteOnRequest from "app/requests/mutations/voteOnRequest"
 import { resolver, NotFoundError } from "blitz"
 import db from "db"
 import * as z from "zod"
