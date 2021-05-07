@@ -1,4 +1,4 @@
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import { Head, Link, useRouter, useQuery, useParam, BlitzPage, useMutation, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getProduct from "app/products/queries/getProduct"
@@ -6,13 +6,45 @@ import deleteProduct from "app/products/mutations/deleteProduct"
 import voteOnRequest from "app/requests/mutations/voteOnRequest"
 import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 import classNames from "classnames"
+import { useGetDay } from "app/core/hooks/getDate"
+import Modal from "app/core/components/Modal"
+
+const ProductActions = (productId) => {
+  const currentUser = useCurrentUser()
+  const router = useRouter()
+  const [deleteProductMutation] = useMutation(deleteProduct)
+  if (currentUser) {
+    return (
+      <div className="mt-5">
+        <Link href={Routes.EditProductPage({ productId: String(productId) })}>
+          <a>Edit</a>
+        </Link>
+
+        <button
+          type="button"
+          onClick={async () => {
+            if (window.confirm("This will be deleted")) {
+              await deleteProductMutation({ id: productId })
+              router.push(Routes.ProductsPage())
+            }
+          }}
+          style={{ marginLeft: "0.5rem" }}
+        >
+          Delete
+        </button>
+      </div>
+    )
+  }
+  return <div></div>
+}
 
 export const Product = () => {
-  const router = useRouter()
   const productId = useParam("productId", "number")
-  const [deleteProductMutation] = useMutation(deleteProduct)
   const [voteOnRequestMutation] = useMutation(voteOnRequest)
   const [product, { refetch }] = useQuery(getProduct, { id: productId })
+  const [isModal, setIsModal] = useState(false)
+  const [modalTitle, setModalTitle] = useState("")
+  const [modalBody, setModalBody] = useState("")
   const currentUser = useCurrentUser()
 
   return (
@@ -22,8 +54,16 @@ export const Product = () => {
       </Head>
 
       <div>
-        <h1>{product.name}</h1>
-        <header className="flex flex-row mb-4 items-center">
+        <div className="font-sans">
+          <h1 className="font-bold font-sans break-normal text-gray-900 pt-6 pb-2 text-2xl md:text-2xl">
+            {product.name}
+          </h1>
+          <p className="text-sm md:text-base font-normal text-gray-600">
+            Published {useGetDay(product.createdAt)}
+          </p>
+        </div>
+        <p className="py-6">{product.description}</p>
+        <header className="flex flex-row mb-4 mt-5 items-center">
           <h2 className="text-base tracking-wider uppercase leading-tight font-semibold text-gray-600">
             Product Feature Requests
           </h2>
@@ -35,7 +75,17 @@ export const Product = () => {
             </Link>
           </span>
         </header>
-        <ul className="space-y-4 p-4 bg-gray-200 rounded">
+        <Modal
+          title={modalTitle}
+          isActive={isModal}
+          body={modalBody}
+          onClose={() => {
+            setIsModal(false)
+            setModalTitle("")
+            setModalBody("")
+          }}
+        />
+        <ul className="space-y-4 p-4 bg-gray-200 rounded mb-10">
           {product.requests.map((request, ind) => {
             const hasVoted = request.votesOnRequest.find(
               (voteOnRequest) => voteOnRequest.userId === currentUser?.id
@@ -46,16 +96,28 @@ export const Product = () => {
                 <div className="border rounded">
                   <button
                     onClick={async () => {
-                      try {
-                        await voteOnRequestMutation({
-                          data: {
-                            requestId: request.id,
-                            userId: currentUser?.id,
-                          },
-                        })
-                        refetch()
-                      } catch (error) {
-                        console.log(error)
+                      if (currentUser) {
+                        if (hasVoted) {
+                          setIsModal(true)
+                          setModalTitle("Already Voted")
+                          setModalBody("Your vote has been already recorded on this request")
+                        } else {
+                          try {
+                            await voteOnRequestMutation({
+                              data: {
+                                requestId: request.id,
+                                userId: currentUser?.id,
+                              },
+                            })
+                            refetch()
+                          } catch (error) {
+                            console.log(error)
+                          }
+                        }
+                      } else {
+                        setIsModal(true)
+                        setModalTitle("Login")
+                        setModalBody("You need to login to be able to vote")
                       }
                     }}
                     className={classNames(
@@ -77,23 +139,7 @@ export const Product = () => {
             )
           })}
         </ul>
-
-        <Link href={Routes.EditProductPage({ productId: String(product.id) })}>
-          <a>Edit</a>
-        </Link>
-
-        <button
-          type="button"
-          onClick={async () => {
-            if (window.confirm("This will be deleted")) {
-              await deleteProductMutation({ id: product.id })
-              router.push(Routes.ProductsPage())
-            }
-          }}
-          style={{ marginLeft: "0.5rem" }}
-        >
-          Delete
-        </button>
+        <ProductActions productId={product.id} />
       </div>
     </>
   )
@@ -107,7 +153,6 @@ const ShowProductPage: BlitzPage = () => {
   )
 }
 
-ShowProductPage.authenticate = true
 ShowProductPage.getLayout = (page) => <Layout>{page}</Layout>
 
 export default ShowProductPage
