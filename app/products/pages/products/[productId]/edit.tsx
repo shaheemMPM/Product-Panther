@@ -1,5 +1,5 @@
 import { Suspense } from "react"
-import { Head, Link, useRouter, useQuery, useMutation, useParam, BlitzPage, Routes } from "blitz"
+import { Head, useRouter, useQuery, useMutation, useParam, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getProduct from "app/products/queries/getProduct"
 import updateProduct from "app/products/mutations/updateProduct"
