@@ -36,9 +36,7 @@ const RequestActions = (requestId) => {
 }
 
 export const Request = () => {
-  const router = useRouter()
   const requestId = useParam("requestId", "number")
-  const [deleteRequestMutation] = useMutation(deleteRequest)
   const [request] = useQuery(getRequest, { id: requestId })
 
   return (
