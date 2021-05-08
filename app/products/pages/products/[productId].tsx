@@ -15,8 +15,8 @@ const ProductActions = (productId) => {
   const [deleteProductMutation] = useMutation(deleteProduct)
   if (currentUser) {
     return (
-      <div className="mt-5">
-        <Link href={Routes.EditProductPage({ productId: String(productId) })}>
+      <div className="mt-5 mb-10">
+        <Link href={Routes.EditProductPage({ productId: productId.productId })}>
           <a>Edit</a>
         </Link>
 
@@ -24,7 +24,7 @@ const ProductActions = (productId) => {
           type="button"
           onClick={async () => {
             if (window.confirm("This will be deleted")) {
-              await deleteProductMutation({ id: productId })
+              await deleteProductMutation({ id: Number(productId.productId) })
               router.push(Routes.ProductsPage())
             }
           }}
@@ -36,6 +36,31 @@ const ProductActions = (productId) => {
     )
   }
   return <div></div>
+}
+
+const NewRequestButton = (productId) => {
+  const currentUser = useCurrentUser()
+  if (currentUser) {
+    return (
+      <span className="ml-auto">
+        <Link href={`/requests/products/${productId.productId}/new`}>
+          <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold">
+            New Request
+          </a>
+        </Link>
+      </span>
+    )
+  } else {
+    return (
+      <span className="ml-auto">
+        <Link href="/login">
+          <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold">
+            New Request
+          </a>
+        </Link>
+      </span>
+    )
+  }
 }
 
 export const Product = () => {
@@ -67,13 +92,7 @@ export const Product = () => {
           <h2 className="text-base tracking-wider uppercase leading-tight font-semibold text-gray-600">
             Product Feature Requests
           </h2>
-          <span className="ml-auto">
-            <Link href="/requests/new">
-              <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold">
-                New Request
-              </a>
-            </Link>
-          </span>
+          <NewRequestButton productId={product.id} />
         </header>
         <Modal
           title={modalTitle}

@@ -3,7 +3,7 @@ import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes } from "bli
 import Layout from "app/core/layouts/Layout"
 import getProducts from "app/products/queries/getProducts"
 
-const ITEMS_PER_PAGE = 100
+const ITEMS_PER_PAGE = 15
 
 export const ProductsList = () => {
   const router = useRouter()
@@ -18,23 +18,29 @@ export const ProductsList = () => {
   const goToNextPage = () => router.push({ query: { page: page + 1 } })
 
   return (
-    <div>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            <Link href={Routes.ShowProductPage({ productId: String(product.id) })}>
-              <a>{product.name}</a>
-            </Link>
-          </li>
-        ))}
+    <div className="mt-5">
+      <ul className="grid grid-cols-12">
+        {products?.map((product) => {
+          return (
+            <li key={product.id} className="border p-4 col-span-4">
+              <h2 className="font-bold text-lg">{product.name}</h2>
+              <Link href={`/products/${product.id}`}>
+                <a className="text-blue-500 underline">View requests</a>
+              </Link>
+            </li>
+          )
+        })}
       </ul>
-
-      <button disabled={page === 0} onClick={goToPreviousPage}>
-        Previous
-      </button>
-      <button disabled={!hasMore} onClick={goToNextPage}>
-        Next
-      </button>
+      <div className="flex flex-row mt-5">
+        <button disabled={page === 0} onClick={goToPreviousPage} className="hover:text-blue-600">
+          <span className="leading-7 pr-1 align-middle">&lt;</span>
+          <span className="align-middle">previous</span>{" "}
+        </button>
+        <button disabled={!hasMore} onClick={goToNextPage} className="ml-auto hover:text-blue-600">
+          <span className="align-middle">next</span>{" "}
+          <span className="leading-7 align-middle pl-1">&gt;</span>
+        </button>
+      </div>
     </div>
   )
 }
@@ -46,10 +52,12 @@ const ProductsPage: BlitzPage = () => {
         <title>Products</title>
       </Head>
 
-      <div>
+      <div className="mt-10">
         <p>
           <Link href={Routes.NewProductPage()}>
-            <a>Create Product</a>
+            <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
+              Create Product
+            </a>
           </Link>
         </p>
 

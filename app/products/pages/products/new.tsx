@@ -9,31 +9,29 @@ const NewProductPage: BlitzPage = () => {
   const [createProductMutation] = useMutation(createProduct)
 
   return (
-    <div>
-      <h1>Create New Product</h1>
+    <div className="mt-10 flex bg-gray-bg1">
+      <div className="w-full max-w-2xl m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
+        <h1 className="text-xl font-medium text-primary mt-4 mb-8 text-center">
+          Create New Product
+        </h1>
 
-      <ProductForm
-        submitText="Create Product"
-        schema={CreateProduct}
-        initialValues={{}}
-        onSubmit={async (values) => {
-          try {
-            const product = await createProductMutation(values)
-            router.push(`/products/${product.id}`)
-          } catch (error) {
-            console.error(error)
-            return {
-              [FORM_ERROR]: error.toString(),
+        <ProductForm
+          submitText="Create Product"
+          schema={CreateProduct}
+          initialValues={{}}
+          onSubmit={async (values) => {
+            try {
+              const product = await createProductMutation(values)
+              router.push(`/products/${product.id}`)
+            } catch (error) {
+              console.error(error)
+              return {
+                [FORM_ERROR]: error.toString(),
+              }
             }
-          }
-        }}
-      />
-
-      <p>
-        <Link href={Routes.ProductsPage()}>
-          <a>Products</a>
-        </Link>
-      </p>
+          }}
+        />
+      </div>
     </div>
   )
 }

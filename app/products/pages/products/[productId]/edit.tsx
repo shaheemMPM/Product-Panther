@@ -7,8 +7,8 @@ import { ProductForm, FORM_ERROR } from "app/products/components/ProductForm"
 
 export const EditProduct = () => {
   const router = useRouter()
-  const productId = useParam("productId", "number")
-  const [product, { setQueryData }] = useQuery(getProduct, { id: productId })
+  const productId = useParam("productId", "string")
+  const [product, { setQueryData }] = useQuery(getProduct, { id: Number(productId) })
   const [updateProductMutation] = useMutation(updateProduct)
 
   return (
@@ -17,31 +17,31 @@ export const EditProduct = () => {
         <title>Edit Product {product.id}</title>
       </Head>
 
-      <div>
-        <h1>Edit Product {product.id}</h1>
-        <pre>{JSON.stringify(product)}</pre>
+      <div className="mt-10 flex bg-gray-bg1">
+        <div className="w-full max-w-2xl m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
+          <h1 className="text-xl font-medium text-primary mt-4 mb-8 text-center">Edit Product</h1>
 
-        <ProductForm
-          submitText="Update Product"
-          // schema={UpdateProduct}
-          initialValues={product}
-          onSubmit={async (values) => {
-            try {
-              const updated = await updateProductMutation({
-                id: product.id,
-                name: values.name,
-                description: values.description,
-              })
-              await setQueryData(updated)
-              router.push(Routes.ShowProductPage({ productId: String(updated.id) }))
-            } catch (error) {
-              console.error(error)
-              return {
-                [FORM_ERROR]: error.toString(),
+          <ProductForm
+            submitText="Update Product"
+            initialValues={product}
+            onSubmit={async (values) => {
+              try {
+                const updated = await updateProductMutation({
+                  id: product.id,
+                  name: values.name,
+                  description: values.description,
+                })
+                await setQueryData(updated)
+                router.push(Routes.ShowProductPage({ productId: String(updated.id) }))
+              } catch (error) {
+                console.error(error)
+                return {
+                  [FORM_ERROR]: error.toString(),
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
     </>
   )
@@ -53,12 +53,6 @@ const EditProductPage: BlitzPage = () => {
       <Suspense fallback={<div>Loading...</div>}>
         <EditProduct />
       </Suspense>
-
-      <p>
-        <Link href={Routes.ProductsPage()}>
-          <a>Products</a>
-        </Link>
-      </p>
     </div>
   )
 }
