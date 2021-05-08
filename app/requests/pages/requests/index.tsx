@@ -47,12 +47,6 @@ const RequestsPage: BlitzPage = () => {
       </Head>
 
       <div>
-        <p>
-          <Link href={Routes.NewRequestPage()}>
-            <a>Create Request</a>
-          </Link>
-        </p>
-
         <Suspense fallback={<div>Loading...</div>}>
           <RequestsList />
         </Suspense>
