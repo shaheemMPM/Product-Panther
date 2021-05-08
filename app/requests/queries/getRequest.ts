@@ -9,7 +9,7 @@ const GetRequest = z.object({
 
 export default resolver.pipe(resolver.zod(GetRequest), resolver.authorize(), async ({ id }) => {
   // TODO: in multi-tenant app, you must add validation to ensure correct tenant
-  const request = await db.request.findFirst({ where: { id } })
+  const request = await db.request.findFirst({ where: { id }, include: { product: true } })
 
   if (!request) throw new NotFoundError()
 

@@ -17,11 +17,12 @@ const ProductActions = (productId) => {
     return (
       <div className="mt-5 mb-10">
         <Link href={Routes.EditProductPage({ productId: productId.productId })}>
-          <a>Edit</a>
+          <a className="hover:text-blue-600">Edit</a>
         </Link>
 
         <button
           type="button"
+          className="hover:text-red-600"
           onClick={async () => {
             if (window.confirm("This will be deleted")) {
               await deleteProductMutation({ id: Number(productId.productId) })

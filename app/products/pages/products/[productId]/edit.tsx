@@ -14,7 +14,7 @@ export const EditProduct = () => {
   return (
     <>
       <Head>
-        <title>Edit Product {product.id}</title>
+        <title>Edit Product {product.name}</title>
       </Head>
 
       <div className="mt-10 flex bg-gray-bg1">

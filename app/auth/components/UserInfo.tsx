@@ -9,8 +9,14 @@ const UserInfo = () => {
     return (
       <>
         <div className="flex flex-row space-x-4 justify-center items-center mt-4">
+          <Link href="/products">
+            <a className="button small ml-auto hover:text-blue-600">My Products</a>
+          </Link>
+          <Link href="/requests">
+            <a className="button small ml-auto hover:text-blue-600">My Requests</a>
+          </Link>
           <button
-            className="button small ml-auto"
+            className="button small ml-auto hover:text-red-600"
             onClick={async () => {
               await logoutMutation()
             }}

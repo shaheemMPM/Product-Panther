@@ -2,13 +2,16 @@ import { Suspense } from "react"
 import { Head, Link, usePaginatedQuery, useRouter, BlitzPage, Routes } from "blitz"
 import Layout from "app/core/layouts/Layout"
 import getProducts from "app/products/queries/getProducts"
+import { useCurrentUser } from "app/core/hooks/useCurrentUser"
 
 const ITEMS_PER_PAGE = 15
 
 export const ProductsList = () => {
+  const currentUser = useCurrentUser()
   const router = useRouter()
   const page = Number(router.query.page) || 0
   const [{ products, hasMore }] = usePaginatedQuery(getProducts, {
+    where: { userId: currentUser?.id },
     orderBy: { id: "asc" },
     skip: ITEMS_PER_PAGE * page,
     take: ITEMS_PER_PAGE,
@@ -53,13 +56,14 @@ const ProductsPage: BlitzPage = () => {
       </Head>
 
       <div className="mt-10">
-        <p>
+        <div className="flex flex-row">
+          <h1 className="text-2xl font-medium text-primary text-center">My Products</h1>
           <Link href={Routes.NewProductPage()}>
-            <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold max-w-sm mx-auto">
+            <a className="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded text-white font-bold ml-auto">
               Create Product
             </a>
           </Link>
-        </p>
+        </div>
 
         <Suspense fallback={<div>Loading...</div>}>
           <ProductsList />

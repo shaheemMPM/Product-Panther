@@ -9,42 +9,39 @@ import { CreateRequest } from "../../../validations"
 export const EditRequest = () => {
   const router = useRouter()
   const requestId = useParam("requestId", "number")
-  const [request, { setQueryData }] = useQuery(getRequest, { id: requestId })
+  const [request] = useQuery(getRequest, { id: requestId })
   const [updateRequestMutation] = useMutation(updateRequest)
 
   return (
     <>
       <Head>
-        <title>Edit Request {request.id}</title>
+        <title>Edit Request {request.title}</title>
       </Head>
 
-      <div>
-        <h1>Edit Request {request.id}</h1>
-        <pre>{JSON.stringify(request)}</pre>
+      <div className="mt-10 flex bg-gray-bg1">
+        <div className="w-full max-w-2xl m-auto bg-white rounded-lg border border-primaryBorder shadow-default py-10 px-16">
+          <h1 className="text-xl font-medium text-primary mt-4 mb-8 text-center">Edit Request</h1>
 
-        <RequestForm
-          submitText="Update Request"
-          // TODO use a zod schema for form validation
-          //  - Tip: extract mutation's schema into a shared `validations.ts` file and
-          //         then import and use it here
-          schema={CreateRequest}
-          initialValues={request}
-          onSubmit={async (values) => {
-            try {
-              const updated = await updateRequestMutation({
-                id: request.id,
-                ...values,
-              })
-              await setQueryData(updated)
-              router.push(Routes.ShowRequestPage({ requestId: String(updated.id) }))
-            } catch (error) {
-              console.error(error)
-              return {
-                [FORM_ERROR]: error.toString(),
+          <RequestForm
+            submitText="Update Request"
+            schema={CreateRequest}
+            initialValues={request}
+            onSubmit={async (values) => {
+              try {
+                const updated = await updateRequestMutation({
+                  id: request.id,
+                  ...values,
+                })
+                router.push(Routes.ShowRequestPage({ requestId: String(updated.id) }))
+              } catch (error) {
+                console.error(error)
+                return {
+                  [FORM_ERROR]: error.toString(),
+                }
               }
-            }
-          }}
-        />
+            }}
+          />
+        </div>
       </div>
     </>
   )
@@ -52,17 +49,9 @@ export const EditRequest = () => {
 
 const EditRequestPage: BlitzPage = () => {
   return (
-    <div>
-      <Suspense fallback={<div>Loading...</div>}>
-        <EditRequest />
-      </Suspense>
-
-      <p>
-        <Link href={Routes.RequestsPage()}>
-          <a>Requests</a>
-        </Link>
-      </p>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <EditRequest />
+    </Suspense>
   )
 }
 
